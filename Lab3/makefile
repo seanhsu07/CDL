@@ -352,7 +352,7 @@ report_power -hier >> reports/$(MOD_NAME).rep
 write_file -format verilog -hierarchy -output "mapped/$(MOD_NAME).v"
 
 # Step 2: Set design constraints
-set_max_delay <delay> -from "<input>" -to "<output>"
+set_max_delay 6.41 -from "<input>" -to "<output>"
 
 # Step 3: Compile the design
 compile -map_effort high -boundary_optimization
