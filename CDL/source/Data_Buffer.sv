@@ -22,7 +22,7 @@ reg [6:0] write_pointer;
 reg [63:0][7:0] buffer;
 reg [63:0][7:0] nxt_buffer;
 
-assign buffer_occupancy = write_pointer;
+assign buffer_occupancy = write_pointer - read_pointer;
 
 always_comb begin
 	if(store_rx_packet_data) begin
@@ -68,13 +68,29 @@ always_ff@(negedge n_rst, posedge clk) begin
 		read_pointer = read_pointer + 1;
 		end
 		else if (get_rx_data)begin
-		read_pointer = read_pointer + 4;
+			if(data_size == 2'b00) begin
+			read_pointer = read_pointer + 1;
+			end
+			else if (data_size == 2'b10) begin
+			read_pointer = read_pointer + 2;
+			end
+			else if (data_size == 2'b11) begin
+			read_pointer = read_pointer + 4;
+			end
 		end
 		else if(store_rx_packet_data)begin
 		write_pointer = write_pointer + 1;
 		end
 		else if (store_tx_data)begin
-		write_pointer = write_pointer + 4;
+			if(data_size == 2'b00) begin
+			write_pointer = write_pointer + 1;
+			end
+			else if (data_size == 2'b10) begin
+			write_pointer = write_pointer + 2;
+			end
+			else if (data_size == 2'b11) begin
+			write_pointer = write_pointer + 4;
+			end
 		end
 		else begin
 		read_pointer = read_pointer;
